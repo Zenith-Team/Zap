@@ -81,6 +81,7 @@
 
 	<sprite string_id="zap:note" name="Music Note" notes="A note for the clef challenge.">
         <value nybble="1-2" title="Manager ID" category="behavior"/>
+		<value nybble="3" title="Phase ID" category="behavior" comment="Starts at 0. Used to identify the collection round this note is affected by."/>
         <!-- <list nybble="3" title="Note Sound">
             <entry value="0">First C</entry>
             <entry value="1">D</entry>
@@ -122,8 +123,10 @@
             <entry value="8">1-up Mushroom</entry>
             <entry value="9">3-up Moon</entry>
         </list>
-        <value nybble="6-7" title="Time Limit" comment="In real seconds." category="behavior"/>
-		
+        <value nybble="6-7" title="Time Limit" comment="Time limit in real seconds to collect all notes for each round." category="behavior"/>
+		<value nybble="8" title="Phases" comment="Number of phases/collection rounds of notes for the player to collect. Limited to a max of 8 rounds." category="behavior"/>
+		<value nybble="9" title="Allowed Retries" comment="The clef respawns and allows the player to re-attempt the minigame" category="behavior"/>
+
         <list nybble="20" title="Movement Type" category="movement">
 			<entry value="0">None</entry>
 			<entry value="1">Sway Or Spin (68, 69, 116, 118)</entry>
@@ -139,9 +142,7 @@
 		</list>
         <value nybble="21-22" title="Movement ID" category="movement"/>
 
-		<value nybble="8-9" title="Target Event ID (challenge start)" comment="Event activated when the Clef is collected." category="events"/>
-		<value nybble="10-11" title="Target Event ID (challenge won)" comment="Event activated when all Notes are collected." category="events"/>
-    </sprite>
+	</sprite>
 
 	<sprite string_id="zap:jumboray" name="Jumbo Ray">
 		<value nybble="5-6" title="Altitude" comment="In tiles." category="behavior"/>

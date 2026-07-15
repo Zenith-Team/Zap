@@ -1,16 +1,21 @@
 #pragma once
 
+#include <zap/actor/Note.h>
 #include <actor/Profile.h>
 #include <effect/EffectObj.h>
 #include <actor/ActorState.h>
 #include <graphics/AnimModel.h>
 #include <map_obj/ParentMovementMgr.h>
+#include <red/actor/event/FreezeFrameEvent.h>
 
 namespace zap {
 
 class Clef : public ActorMultiState {
     SEAD_RTTI_OVERRIDE(Clef, ActorMultiState);
 
+public:
+    static constexpr u8 cPhaseLimit = 8;
+    
 public:
     static Profile* sProfile;
 
@@ -26,34 +31,43 @@ public:
     void updateModel();
     void collect();
 
-    void noteCollected(); // todo maybe add params here
-    
-    [[nodiscard]]
-    bool isReady() { return mNotes != nullptr; }
+    void noteCollected();
 
     static const ActorCreateInfo cCreateInfo;
     static const ActorCollisionCheck::CollisionData cCollisionData;
 
+    DECLARE_STATE_ID(Clef, Waiting)
+    DECLARE_STATE_ID(Clef, GameActive)
+    DECLARE_STATE_ID(Clef, AnimateCollecting)
+    DECLARE_STATE_ID(Clef, AnimateAppear)
+
 private:
+    void setCurrentNotesState(const StateID& state) const;
+    void setAllNotesState(const StateID& state) const;
+
     AnimModel* mClefModel;
-    bool mCollected;
-    bool mCollecting; // for anim
-    f32 mCollectAnimProgress;
-    f32 mBaseScale;
     f32 mTime;
     u32 mManagerID;
     u32 mRewardID;
 
-    u32 mGameStartEventID;
-    u32 mGameWonEventID;
-    
-    u32 mTargetNoteCount;
-    u32 mFoundNoteCount;
-    u32 mStoredNoteCount;
-    u32 mCollectedNoteCount;
+    u32 mTimeLimit;
+
     u32 mScanAttempt;
+    bool mReady;
+
+    u8 mAttemptsRemaining;
     
-    ActorUniqueID* mNotes;
+    u8 mPhaseCount;
+    u32 mTargetNoteCount;
+    
+    u32 mCurrentPhaseTimer;
+
+    u8 mActivePhaseID;
+    u32 mCollectedNoteCount;
+    
+    u32 mStartCollectAnimTime;
+    
+    sead::SafeArray<ActorUniqueID*, 8> nNotes;
 
     EffectObj mEffect1;
     EffectObj mEffect2;
@@ -61,6 +75,9 @@ private:
     EffectObj mEffect4;
 
     ParentMovementMgr mMovementHandler;
+
+    // 
+    red::FreezeFrameEvent<zap::Clef, zap::Note> mFreezeEvent;
 };
 
 } // namespace zap

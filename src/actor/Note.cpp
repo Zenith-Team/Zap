@@ -1,14 +1,19 @@
 #include <zap/Zap.h>
+#include <zap/actor/Clef.h>
 #include <telkin/Print.h>
 #include <zap/actor/Note.h>
 #include <actor/ActorMgr.h>
 #include <red/util/SpriteUtil.h>
+#include <input/InputMgr.h>
 
 SEAD_RTTI_OVERRIDE_IMPL(zap::Note, ActorMultiState)
 
 CREATE_STATE_ID(zap::Note, Idle)
 CREATE_STATE_ID(zap::Note, Active)
-CREATE_STATE_ID(zap::Note, Collecting)
+CREATE_STATE_ID(zap::Note, AnimateCollecting)
+CREATE_STATE_ID(zap::Note, AnimateAppear)
+CREATE_STATE_ID(zap::Note, AnimateDisappear)
+CREATE_STATE_ID(zap::Note, AnimateExpiry)
 
 static constexpr f32 cScaleFactor = 0.17f;
 
@@ -21,7 +26,7 @@ const ActorCreateInfo zap::Note::cCreateInfo = {
     .cull_range = { 
         .up = 0, .down = 0, .left = 0, .right = 0
     },
-    .flag = ActorCreateInfo::cFlag_MapObj
+    .flag = ActorCreateInfo::cFlag_MapObj | ActorCreateInfo::cFlag_IgnoreSpawnRange
 };
 
 using CC = ActorCollisionCheck;
@@ -55,21 +60,30 @@ zap::Note::Note(const ActorCreateParam& param)
     , mModel(nullptr)
     , mClefParent()
     , mManagerID()
+    , mPhaseID()
     , mCollected(false)
+    , mWarnTime(0)
 { }
 
 ActorBase::Result zap::Note::create() {
-    tk::print("Note created\n");
+    tk::println("Note created");
 
     mModel = AnimModel::create("note", "note", 4, 0, 1);
     mModel->playTexSrtAnim("anim_color");
-    mModel->playSklAnim("Wait");
+    mModel->getShuAnim(0)->getFrameCtrl().setFrame(InputMgr::instance()->getRandom().getF32Range(0.0f, mModel->getShuAnim(0)->getFrameCtrl().getFrameEnd()));
+    
     mScale = sead::Vector3f(cScaleFactor, cScaleFactor, cScaleFactor);
 
     mCollisionCheck.set(this, cCollisionData);
     
     // Setting: Manager ID
     mManagerID = (red::SpriteUtil::getNybble1(this) << 4) | red::SpriteUtil::getNybble2(this);
+
+    // Setting: Phase ID
+    mPhaseID = red::SpriteUtil::getNybble3(this);
+    if (mPhaseID > Clef::cPhaseLimit) {
+        tk::fatal("Phase ID was too high");
+    }
     
     // Movement setup
     const u8 nybble20 = red::SpriteUtil::getNybble20(this);
@@ -97,8 +111,8 @@ bool zap::Note::execute() {
 }
 
 bool zap::Note::draw() {
-    if (isState(StateID_Active) || isState(StateID_Collecting))
-        mModel->draw();
+    mModel->draw();
+
     return true;
 }
 
@@ -111,19 +125,20 @@ void zap::Note::collect() {
         return;
     }
 
-    if (isState(StateID_Active)) {
-        changeState(StateID_Idle); 
-    }
-
-    // TODO: add collect anim or whatever (StateID_Collecting?)
+    mCollected = true;
 
     // TODO: notify parent
     ActorBase* parent = ActorMgr::instance()->getActorPtr(mClefParent);
     if (parent != nullptr) {
         Clef* clef = static_cast<Clef*>(parent);
+        // TODO: include round
         clef->noteCollected();
     } else {
-        tk::println("FAILED TO NOTIFY PARENT");
+        tk::println("Note: failed to notify parent about collection.");
+    }
+
+    if (isState(StateID_Active) || isState(StateID_AnimateExpiry)) {
+        changeState(StateID_AnimateCollecting);
     }
 }
 
@@ -132,24 +147,26 @@ void zap::Note::reset() { }
 /** STATE: Idle */
 
 void zap::Note::initializeState_Idle() {
-    tk::println(":3 Idle");
+    mIsDrawEnable = false;
 }
 
 void zap::Note::executeState_Idle() { }
 
-void zap::Note::finalizeState_Idle() { }
-
+void zap::Note::finalizeState_Idle() {
+    mIsDrawEnable = true;
+}
 
 /** STATE: Active */
 
 void zap::Note::initializeState_Active() { 
-    // so this is called when the note becomes active
-    tk::println(":3 Active");
+    // Note activated
 
     reviveCollisionCheck();
+
+    mModel->playSklAnim("Wait");
+    mModel->getSklAnim(0)->getFrameCtrl().setPlayMode(FrameCtrl::cMode_Repeat);
     
     mCollected = false;
-    //TODO: here add logic for animation when the note spawns (idk some rotate? check odyssey)
 }
 
 void zap::Note::executeState_Active() { 
@@ -160,23 +177,75 @@ void zap::Note::finalizeState_Active() {
     removeCollisionCheck();
 }
 
+/** STATE: AnimateCollecting */
 
-/** STATE: Collecting */
-
-void zap::Note::initializeState_Collecting() { 
+void zap::Note::initializeState_AnimateCollecting() { 
     tk::println(":3 Collecting");
+
+    // TODO: "disable collect animation" nybble
+    mModel->playSklAnim("Got");
+    mModel->getSklAnim(0)->getFrameCtrl().setPlayMode(FrameCtrl::cMode_NoRepeat);
 }
 
-void zap::Note::executeState_Collecting() { 
-    //TODO: logic for animating the note when its collected
-    // when done switch back to idle and reset!
+void zap::Note::executeState_AnimateCollecting() { 
+    updateModel();
+
+    if (mModel->getSklAnim(0)->getFrameCtrl().isStop()) {
+        changeState(StateID_Idle);
+    }
+}
+
+void zap::Note::finalizeState_AnimateCollecting() { }
+
+/** STATE: AnimateAppear */
+// Use this state to set the note to Active.
+void zap::Note::initializeState_AnimateAppear() { 
+    mModel->playSklAnim("Appear");
+    mModel->getSklAnim(0)->getFrameCtrl().setPlayMode(FrameCtrl::cMode_NoRepeat);
+}
+
+void zap::Note::executeState_AnimateAppear() { 
+    updateModel();
+    if (mModel->getSklAnim(0)->getFrameCtrl().isStop()) {
+        changeState(StateID_Active);
+    }
+}
+
+void zap::Note::finalizeState_AnimateAppear() { }
+
+
+/** STATE: AnimateDisappear */
+// Use this state to set the note to Active.
+void zap::Note::initializeState_AnimateDisappear() { 
+    mModel->playSklAnim("Disappear");
+    mModel->getSklAnim(0)->getFrameCtrl().setPlayMode(FrameCtrl::cMode_NoRepeat);
+}
+
+void zap::Note::executeState_AnimateDisappear() { 
+    updateModel();
+    if (mModel->getSklAnim(0)->getFrameCtrl().isStop()) {
+        changeState(StateID_Idle);
+    }
+}
+
+void zap::Note::finalizeState_AnimateDisappear() { }
+
+/** STATE: AnimateExpiry */
+void zap::Note::initializeState_AnimateExpiry() { 
+    mWarnTime = 0;
+}
+
+void zap::Note::executeState_AnimateExpiry() { 
+    mWarnTime++;
+    
+    // every 20ms turn rendering on or off 
+    if (mWarnTime % 8 == 0 && !mCollected) {
+        mIsDrawEnable = !mIsDrawEnable;
+    }
+    
     updateModel();
 }
 
-void zap::Note::finalizeState_Collecting() {
-    
+void zap::Note::finalizeState_AnimateExpiry() {
+    mIsDrawEnable = true;
 }
-
-
-
-// Todo: note collect effect RP_DRCStar_TouchGet scaled down 0.25
