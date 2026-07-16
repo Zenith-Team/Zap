@@ -81,7 +81,7 @@ ActorBase::Result zap::Note::create() {
 
     // Setting: Phase ID
     mPhaseID = red::SpriteUtil::getNybble3(this);
-    if (mPhaseID > Clef::cPhaseLimit) {
+    if (mPhaseID >= Clef::cPhaseLimit) {
         tk::fatal("Phase ID was too high");
     }
     
@@ -121,25 +121,25 @@ void zap::Note::updateModel() {
 }
 
 void zap::Note::collect() { 
-    if (mCollected) {
+    if (mCollected || (!isState(StateID_Active) && !isState(StateID_AnimateExpiry))) {
+        return;
+    }
+
+    ActorBase* parent = ActorMgr::instance()->getActorPtr(mClefParent);
+    if (parent == nullptr) {
+        tk::println("Note: failed to notify parent about collection.");
+        return;
+    }
+
+    Clef* clef = static_cast<Clef*>(parent);
+    if (!clef->isState(Clef::StateID_GameActive)) {
         return;
     }
 
     mCollected = true;
+    changeState(StateID_AnimateCollecting);
 
-    // TODO: notify parent
-    ActorBase* parent = ActorMgr::instance()->getActorPtr(mClefParent);
-    if (parent != nullptr) {
-        Clef* clef = static_cast<Clef*>(parent);
-        // TODO: include round
-        clef->noteCollected();
-    } else {
-        tk::println("Note: failed to notify parent about collection.");
-    }
-
-    if (isState(StateID_Active) || isState(StateID_AnimateExpiry)) {
-        changeState(StateID_AnimateCollecting);
-    }
+    clef->noteCollected();
 }
 
 void zap::Note::reset() { }
@@ -152,9 +152,7 @@ void zap::Note::initializeState_Idle() {
 
 void zap::Note::executeState_Idle() { }
 
-void zap::Note::finalizeState_Idle() {
-    mIsDrawEnable = true;
-}
+void zap::Note::finalizeState_Idle() { }
 
 /** STATE: Active */
 
@@ -167,6 +165,9 @@ void zap::Note::initializeState_Active() {
     mModel->getSklAnim(0)->getFrameCtrl().setPlayMode(FrameCtrl::cMode_Repeat);
     
     mCollected = false;
+
+    updateModel();
+    mIsDrawEnable = true;
 }
 
 void zap::Note::executeState_Active() { 
@@ -233,6 +234,7 @@ void zap::Note::finalizeState_AnimateDisappear() { }
 /** STATE: AnimateExpiry */
 void zap::Note::initializeState_AnimateExpiry() { 
     mWarnTime = 0;
+    reviveCollisionCheck();
 }
 
 void zap::Note::executeState_AnimateExpiry() { 
@@ -247,5 +249,6 @@ void zap::Note::executeState_AnimateExpiry() {
 }
 
 void zap::Note::finalizeState_AnimateExpiry() {
+    removeCollisionCheck();
     mIsDrawEnable = true;
 }

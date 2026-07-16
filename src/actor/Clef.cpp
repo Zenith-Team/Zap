@@ -144,7 +144,11 @@ void zap::Clef::scanNotes() {
     for (auto it = actorMgr->getActorBegin(); it != actorMgr->getActorEnd(); it++) {
         if (Note* note = sead::DynamicCast<Note>(*it)) {
             if (note->getManagerID() == mManagerID) {
-                const u8 phase = note->getPhaseID() - 1;
+                const u8 phase = note->getPhaseID();
+                if (phase >= mPhaseCount) {
+                    tk::fatal("Note phase was outside the Clef phase count");
+                    return;
+                }
                 foundNoteCount[phase]++;
                 tk::println("Found note %u of %u for phase %u of %u", foundNoteCount[phase], mTargetNoteCount, phase + 1, mPhaseCount);
             }
@@ -174,7 +178,11 @@ void zap::Clef::scanNotes() {
         if (Note* note = sead::DynamicCast<Note>(*it)) {
             if (note->getManagerID() == mManagerID) {
                 note->setParent(mActorUniqueID); // set the parent to this clef instance
-                const u8 phase = note->getPhaseID() - 1;
+                const u8 phase = note->getPhaseID();
+                if (phase >= mPhaseCount) {
+                    tk::fatal("Note phase was outside the Clef phase count");
+                    return;
+                }
                 if (storedIndex[phase] >= mTargetNoteCount) {
                     tk::fatal("Too many notes in phase");
                     return;
@@ -232,12 +240,17 @@ void zap::Clef::collect() {
 
 void zap::Clef::setCurrentNotesState(const StateID& state) const {
     tk::println("Setting state!1!!");
+    if (mActivePhaseID >= mPhaseCount) {
+        return;
+    }
     for (u32 i = 0; i < mTargetNoteCount; i++) {
         ActorUniqueID uniqueID = nNotes[mActivePhaseID][i];
         ActorBase* actorPtr = ActorMgr::instance()->getActorPtr(uniqueID);
         if (actorPtr != nullptr) {
             Note* note = static_cast<Note*>(actorPtr);
-            note->changeState(state);
+            if (!note->isCollected() || state == Note::StateID_Active) {
+                note->changeState(state);
+            }
         }
     }
 }
@@ -268,6 +281,7 @@ void zap::Clef::noteCollected() {
         // reset state variables
         mCollectedNoteCount = 0;
         mActivePhaseID++;
+        mCurrentPhaseTimer = 0;
 
         // reset timer on phase switch
         
@@ -276,17 +290,32 @@ void zap::Clef::noteCollected() {
             // give powerup reward
             // 0 - none,
             
-            if (mRewardID == 0 || mRewardID > 9)
-                return;
-        
-            // else reward a powerup
-            ActorCreateParam info;
-            info.param_0 = 0x6000000; // set "Reward" spawn mode for item profile (nybble 6)
-            info.profile = Profile::get(cRewards[mRewardID - 1]);
-            
-            ActorMgr::instance()->createImmediately(info); // 0 index
+            if (mRewardID != 0 && mRewardID <= 9) {
+                // else reward a powerup
+                ActorCreateParam info{};
+                info.param_0 = 0x6000000; // set "Reward" spawn mode for item profile (nybble 6)
+                info.profile = Profile::get(cRewards[mRewardID - 1]);
+                
+                ActorMgr::instance()->createImmediately(info); // 0 index
+            }
+
+            for (u32 phase = 0; phase < mPhaseCount; phase++) {
+                for (u32 i = 0; i < mTargetNoteCount; i++) {
+                    ActorUniqueID uniqueID = nNotes[phase][i];
+                    ActorBase* actorPtr = ActorMgr::instance()->getActorPtr(uniqueID);
+                    if (actorPtr != nullptr) {
+                        Note* note = static_cast<Note*>(actorPtr);
+                        note->deleteActor(true);
+                    }
+                }
+            }
+
+            removeCollisionCheck();
+            deleteActor(true);
+            return;
         } else {
-            setCurrentNotesState(Note::StateID_Active); // next phase
+            // next phase
+            setCurrentNotesState(Note::StateID_Active);
             // TODO: play the freeze frame again
         }
     }
@@ -332,8 +361,9 @@ void zap::Clef::executeState_GameActive() {
     mCurrentPhaseTimer++;
     tk::println("Round Time: %u", mCurrentPhaseTimer);
     // time (frames) > ((time limit (seconds) * 60 = frames) * 0.75 early warning)
-    tk::println("Time: %u / %u —— %u)", (mTimeLimit * 60) * 0.75f, mCurrentPhaseTimer, mTimeLimit * 60);
-    if (mCurrentPhaseTimer == static_cast<u32>((mTimeLimit * 60) * 0.75f)) { // auto-determined "warning" time calculated from the time limit nybble
+    const u32 warningTime = static_cast<u32>((mTimeLimit * 60) * 0.75f);
+    tk::println("Time: %u / %u —— %u)", warningTime, mCurrentPhaseTimer, mTimeLimit * 60);
+    if (mCurrentPhaseTimer == warningTime) { // auto-determined "warning" time calculated from the time limit nybble
         // warning
         // just send signal to all notes (set a member) then the notes will flash
         setCurrentNotesState(Note::StateID_AnimateExpiry);
@@ -374,9 +404,6 @@ void zap::Clef::executeState_GameActive() {
             mCurrentPhaseTimer = 0;
             mActivePhaseID = 0;
             mCollectedNoteCount = 0;
-
-            // reset notes
-            setAllNotesState(Note::StateID_Idle);
         }
     }
 }
@@ -386,13 +413,14 @@ void zap::Clef::finalizeState_GameActive() { }
 /** STATE: AnimateCollecting */
 
 void zap::Clef::initializeState_AnimateCollecting() { 
-    // summon notes for phase 1
+    // summon phase notes
     setCurrentNotesState(Note::StateID_Active);
 
     mClefModel->playSklAnim("Got");
     mClefModel->getSklAnim(0)->getFrameCtrl().setPlayMode(FrameCtrl::cMode_NoRepeat);
 
     // freeze the game for x seconds
+    mFreezeEvent.freeze();
     EventMgr::instance()->pushEvent(&mFreezeEvent);
 
     mStartCollectAnimTime = 0;
@@ -431,7 +459,10 @@ void zap::Clef::executeState_AnimateAppear() {
     }
 }
 
-void zap::Clef::finalizeState_AnimateAppear() { }
+void zap::Clef::finalizeState_AnimateAppear() {
+    // reset notes
+    setAllNotesState(Note::StateID_Idle);
+}
 
 
 // Todo: sound effect

@@ -31,13 +31,18 @@ public:
     void reset();
     
     [[nodiscard]]
-    u32 getManagerID() {
+    u8 getManagerID() const {
         return mManagerID;
     }
 
     [[nodiscard]]
-    u32 getPhaseID() {
+    u8 getPhaseID() const {
         return mPhaseID;
+    }
+
+    [[nodiscard]]
+    bool isCollected() const {
+        return mCollected;
     }
 
     static const ActorCreateInfo cCreateInfo;

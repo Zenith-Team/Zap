@@ -76,7 +76,6 @@ private:
 
     ParentMovementMgr mMovementHandler;
 
-    // 
     red::FreezeFrameEvent<zap::Clef, zap::Note> mFreezeEvent;
 };
 
