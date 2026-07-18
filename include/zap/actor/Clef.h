@@ -29,9 +29,9 @@ public:
     void scanNotes();
     
     void updateModel();
-    void collect();
+    void collect(s8 playerNo);
 
-    void noteCollected();
+    void noteCollected(Note* note);
 
     static const ActorCreateInfo cCreateInfo;
     static const ActorCollisionCheck::CollisionData cCollisionData;
@@ -64,8 +64,12 @@ private:
 
     u8 mActivePhaseID;
     u32 mCollectedNoteCount;
-    
+
+    s8 mCollectedPlayer;
+
     u32 mStartCollectAnimTime;
+
+    u16 mGameWonEventID;
     
     sead::SafeArray<ActorUniqueID*, 8> nNotes;
 

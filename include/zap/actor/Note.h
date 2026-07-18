@@ -26,8 +26,8 @@ public:
     void setParent(ActorUniqueID parent) {
         mClefParent = parent;
     }
-    
-    void collect();
+
+    void collect(s8);
     void reset();
     
     [[nodiscard]]

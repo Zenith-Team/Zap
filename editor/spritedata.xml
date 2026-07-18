@@ -92,6 +92,7 @@
             <entry value="6">B</entry>
             <entry value="7">Second C</entry>
         </list> -->
+		<checkbox nybble="4" title="Randomize Texture" comment="Starts the rainbow texture on a random color" category="visual"/> 
         <list nybble="20" title="Movement Type" category="movement">
 			<entry value="0">None</entry>
 			<entry value="1">Sway Or Spin (68, 69, 116, 118)</entry>
@@ -126,6 +127,8 @@
         <value nybble="6-7" title="Time Limit" comment="Time limit in real seconds to collect all notes for each round." category="behavior"/>
 		<value nybble="8" title="Phases" comment="Number of phases/collection rounds of notes for the player to collect. Limited to a max of 8 rounds." category="behavior"/>
 		<value nybble="9" title="Allowed Retries" comment="The clef respawns and allows the player to re-attempt the minigame" category="behavior"/>
+		
+		<value nybble="10-11" title="Target Event ID (Game won)" id_type="event" category="events"/>
 
         <list nybble="20" title="Movement Type" category="movement">
 			<entry value="0">None</entry>
@@ -304,28 +307,28 @@
 		<value nybble="22-24" title="ID" category="behavior"/>
 		<dualbox bit="2" title1="Sprite ID" title2="Profile ID" category="behavior"/>
 		
-        <value nybble="2" title="Child Nybble 2"/>
-        <value nybble="3" title="Child Nybble 3"/>
-		<value nybble="4" title="Child Nybble 4"/>
-        <value nybble="5" title="Child Nybble 5"/>
-        <value nybble="6" title="Child Nybble 6"/>
-        <value nybble="7" title="Child Nybble 7"/>
-        <value nybble="8" title="Child Nybble 8"/>
-        <value nybble="9" title="Child Nybble 9"/>
-        <value nybble="10" title="Child Nybble 10"/>
-        <value nybble="11" title="Child Nybble 11"/>
-        <value nybble="12" title="Child Nybble 12"/>
-        <value nybble="13" title="Child Nybble 13"/>
-        <value nybble="14" title="Child Nybble 14"/>
-        <value nybble="15" title="Child Nybble 15"/>
-        <value nybble="16" title="Child Nybble 16"/>
-        <value nybble="17" title="Child Nybble 17"/>
-        <value nybble="18" title="Child Nybble 18"/>
-        <value nybble="19" title="Child Nybble 19"/>
-        <value nybble="20" title="Child Nybble 20"/>
-		<value nybble="21" title="Child Nybble 21"/>
-		<layer mask="15" type="value" title="Child Nybble 22"/>
-		<layer mask="240" type="value" title="Child Nybble 23"/>
+        <value nybble="2" title="Child Nybble 2" category="Data"/>
+        <value nybble="3" title="Child Nybble 3" category="Data"/>
+		<value nybble="4" title="Child Nybble 4" category="Data"/>
+        <value nybble="5" title="Child Nybble 5" category="Data"/>
+        <value nybble="6" title="Child Nybble 6" category="Data"/>
+        <value nybble="7" title="Child Nybble 7" category="Data"/>
+        <value nybble="8" title="Child Nybble 8" category="Data"/>
+        <value nybble="9" title="Child Nybble 9" category="Data"/>
+        <value nybble="10" title="Child Nybble 10" category="Data"/>
+        <value nybble="11" title="Child Nybble 11" category="Data"/>
+        <value nybble="12" title="Child Nybble 12" category="Data"/>
+        <value nybble="13" title="Child Nybble 13" category="Data"/>
+        <value nybble="14" title="Child Nybble 14" category="Data"/>
+        <value nybble="15" title="Child Nybble 15" category="Data"/>
+        <value nybble="16" title="Child Nybble 16" category="Data"/>
+        <value nybble="17" title="Child Nybble 17" category="Data"/>
+        <value nybble="18" title="Child Nybble 18" category="Data"/>
+        <value nybble="19" title="Child Nybble 19" category="Data"/>
+        <value nybble="20" title="Child Nybble 20" category="Data"/>
+		<value nybble="21" title="Child Nybble 21" category="Data"/>
+		<layer mask="15" type="value" title="Child Nybble 22" category="Data"/>
+		<layer mask="240" type="value" title="Child Nybble 23" category="Data"/>
 	</sprite>
 	
 	<sprite string_id="zap:nybble_bank" name="Nybble Bank" notes="Empty actor which simply holds data for use by Actor Spawners">
