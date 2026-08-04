@@ -198,7 +198,7 @@ class SpriteImage_NybbleBank(SLib.SpriteImage_Static):
 
 ImageClasses = {
     "zap:cataquack": SpriteImage_Cataquack,
-    "zap:biddybud": SpriteImage_ParaBiddybud,
+    "zap:para_biddybud": SpriteImage_ParaBiddybud,
     "zap:flaptor": SpriteImage_Flaptor,
     "zap:stingby": SpriteImage_Stingby,
     "zap:flybones": SpriteImage_FlyBones,
