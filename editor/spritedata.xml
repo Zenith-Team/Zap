@@ -272,11 +272,19 @@
 	</sprite>
 	
 	<sprite string_id="zap:donut_block" name="Donut Block" notes="An actor version of the donut block.">
-		<value nybble="5" title="Width" category="behavior"/>	
+		<list nybble="5" title="Width" category="behavior">
+			<entry value="0">1 Tile</entry>
+			<entry value="1">2 Tiles</entry>
+			<entry value="2">3 Tiles</entry>
+		</list>
 	</sprite>
 	
 	<sprite string_id="zap:frozen_donut_block" name="Frozen Donut Block">
-		<value nybble="5" title="Width" category="behavior"/>	
+		<list nybble="5" title="Width" category="behavior">
+			<entry value="0">1 Tile</entry>
+			<entry value="1">2 Tiles</entry>
+			<entry value="2">3 Tiles</entry>
+		</list>
 	</sprite>
 	
 	<sprite string_id="zap:string_bank" name="String Bank" notes="Stores an arbitrary 16-character string to be used by other actors.">
