@@ -51,7 +51,7 @@ const CC::CollisionData zap::Clef::cCollisionData = {
     .callback = [](ActorCollisionCheck* cc_self, ActorCollisionCheck* cc_other) {
         zap::Clef* self = cc_self->getOwner<zap::Clef>();
         if (self != nullptr) {
-            self->collect(cc_other->getOwner<PlayerObject>()->getPlayerNo());
+            self->collect(cc_other->getOwner<PlayerBase>()->getPlayerNo());
         }
     }
 };
