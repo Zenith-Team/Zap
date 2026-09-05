@@ -22,7 +22,7 @@ const ActorCreateInfo zap::ParaBiddybud::cCreateInfo = {
     .cull_range = { 
         .up = 0, .down = 0, .left = 0, .right = 0
     },
-    .flag = 0
+    .flag = ActorCreateInfo::cFlag_None
 };
 
 using CC = ActorCollisionCheck;

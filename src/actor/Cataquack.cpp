@@ -25,7 +25,7 @@ const ActorCreateInfo zap::Cataquack::cCreateInfo = {
         .half_size_x = 32, .half_size_y = 32,
     },
     .cull_range = { .up = 0, .down = 0, .left = 0, .right = 0 },
-    .flag = 0,
+    .flag = ActorCreateInfo::cFlag_None,
 };
 
 constexpr f32 cScaleFactor = 0.1f;

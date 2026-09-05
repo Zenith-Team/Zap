@@ -257,7 +257,7 @@ void zap::Flaptor::finalizeState_Patrol() { }
 /** STATE: Dive */
 
 void zap::Flaptor::initializeState_Dive() {
-    mAccelY = -0.1875f;
+    mGravity = cDefaultGravity;
     mSpeedMax.y = -4.0f;
     
     mModel->setAnm("Attack", cAnimBlendTime);
