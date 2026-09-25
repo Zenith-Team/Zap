@@ -8,11 +8,11 @@ import miyamoto.spritelib as SLib
 
 ImageCache = SLib.ImageCache
 
-class SpriteImage_Cataquack(SLib.SpriteImage_Static):
+class ZapSpriteImage_Cataquack(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['Cataquack'],
             (0, 0),
         )
@@ -21,11 +21,11 @@ class SpriteImage_Cataquack(SLib.SpriteImage_Static):
     def loadImages():
         SLib.loadIfNotInImageCache('Cataquack', 'cataquack.png')
 
-class SpriteImage_Biddybud(SLib.SpriteImage_Static):
+class ZapSpriteImage_Biddybud(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0
+            3.75,
         )
 
     @staticmethod
@@ -35,33 +35,34 @@ class SpriteImage_Biddybud(SLib.SpriteImage_Static):
         SLib.loadIfNotInImageCache('BiddybudGreen', 'biddybud_green.png')
         SLib.loadIfNotInImageCache('BiddybudBlue', 'biddybud_blue.png')
         SLib.loadIfNotInImageCache('BiddybudPink', 'biddybud_pink.png')
-    
-    def dataChanged(self):
-        super().dataChanged()
 
+    def dataChanged(self):
         self.style = (self.parent.spritedata[2] >> 4) + 1
         self.width = 32
             
-    def paint(self, painter):
         if self.style == 1:
-            painter.drawPixmap(0, 0, ImageCache['BiddybudRed'])
-        elif self.style == 2:
-            painter.drawPixmap(0, 0, ImageCache['BiddybudYellow'])
-        elif self.style == 3:
-            painter.drawPixmap(0, 0, ImageCache['BiddybudGreen'])
-        elif self.style == 4:
-            painter.drawPixmap(0, 0, ImageCache['BiddybudBlue'])
-        elif self.style == 5:
-            painter.drawPixmap(0, 0, ImageCache['BiddybudPink'])            
+            self.image = ImageCache['BiddybudRed']
 
-        super().paint(painter)
+        elif self.style == 2:
+            self.image = ImageCache['BiddybudYellow']
+
+        elif self.style == 3:
+            self.image = ImageCache['BiddybudGreen']
+    
+        elif self.style == 4:
+            self.image = ImageCache['BiddybudBlue']
+
+        else:
+            self.image = ImageCache['BiddybudPink']
+
+        super().dataChanged()
 
 ###
-class SpriteImage_Flaptor(SLib.SpriteImage_Static):
+class ZapSpriteImage_Flaptor(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['Flaptor'],
             (0, 0),
         )
@@ -70,11 +71,11 @@ class SpriteImage_Flaptor(SLib.SpriteImage_Static):
     def loadImages():
         SLib.loadIfNotInImageCache('Flaptor', 'flaptor.png')
 
-#class SpriteImage_Flaptor(SLib.SpriteImage_StaticMultiple):
+#class ZapSpriteImage_Flaptor(SLib.SpriteImage_StaticMultiple):
 #    def __init__(self, parent):
 #        super().__init__(
 #            parent,
-#            4.0,
+#            3.75,
 #        )
 #
 #    #self.offset = (-4, -16)
@@ -116,11 +117,11 @@ class SpriteImage_Flaptor(SLib.SpriteImage_Static):
 
 ###
 
-class SpriteImage_FlyBones(SLib.SpriteImage_Static):
+class ZapSpriteImage_FlyBones(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['FlyBones'],
             (0, 0),
         )
@@ -129,11 +130,11 @@ class SpriteImage_FlyBones(SLib.SpriteImage_Static):
     def loadImages():
         SLib.loadIfNotInImageCache('FlyBones', 'fly_bones.png')
 
-class SpriteImage_Stingby(SLib.SpriteImage_Static):
+class ZapSpriteImage_Stingby(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['Stingby'],
             (0, 0),
         )
@@ -142,11 +143,11 @@ class SpriteImage_Stingby(SLib.SpriteImage_Static):
     def loadImages():
         SLib.loadIfNotInImageCache('Stingby', 'stingby.png')
 
-class SpriteImage_TimeClock(SLib.SpriteImage_Static):
+class ZapSpriteImage_TimeClock(SLib.SpriteImage_Static):
     def __init__(self, parent):
             super().__init__(
                 parent,
-                4.0,
+                3.75,
             )
 
     @staticmethod
@@ -171,23 +172,20 @@ class SpriteImage_TimeClock(SLib.SpriteImage_Static):
             self.height = 32
             self.offset = (0, 0)
             
-    def paint(self, painter):
         if self.small and not self.evil:
-            painter.drawPixmap(0, 0, ImageCache['TimeClock_Small'])
+            self.image = ImageCache['TimeClock_Small']
         elif self.small and self.evil:
-            painter.drawPixmap(0, 0, ImageCache['TimeClock_EvilSmall'])
+            self.image = ImageCache['TimeClock_EvilSmall']
         elif not self.small and self.evil:
-            painter.drawPixmap(0, 0, ImageCache['TimeClock_Evil'])
+            self.image = ImageCache['TimeClock_Evil']
         else:
-            painter.drawPixmap(0, 0, ImageCache['TimeClock'])        
+            self.image = ImageCache['TimeClock']
 
-        super().paint(painter)
-
-class SpriteImage_AngryGrrrol(SLib.SpriteImage_Static):
+class ZapSpriteImage_AngryGrrrol(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['AngryGrrrol'],
             (0, 0),
         )
@@ -196,11 +194,11 @@ class SpriteImage_AngryGrrrol(SLib.SpriteImage_Static):
     def loadImages():
         SLib.loadIfNotInImageCache('AngryGrrrol', 'angry_grrrol.png')
 
-class SpriteImage_DonutBlock(SLib.SpriteImage_Static):
+class ZapSpriteImage_DonutBlock(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0
+            3.75
         )
     
     @staticmethod
@@ -215,6 +213,11 @@ class SpriteImage_DonutBlock(SLib.SpriteImage_Static):
 
         self.widthTiles = (self.parent.spritedata[2] >> 4) + 1
         self.width = self.widthTiles * 16
+
+        self.offset = (
+            (self.widthTiles * -8) + 8,
+            0,
+        )
 
     def paint(self, painter):
         super().paint(painter)
@@ -231,7 +234,7 @@ class SpriteImage_DonutBlock(SLib.SpriteImage_Static):
             painter.drawTiledPixmap(tileSize, 0, totalWidth - tileSize * 2, tileSize, ImageCache['DonutM'])
             painter.drawPixmap(totalWidth - tileSize, 0, ImageCache['DonutR'])
 
-class SpriteImage_FrozenDonutBlock(SLib.SpriteImage_Static):
+class ZapSpriteImage_FrozenDonutBlock(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
@@ -252,7 +255,7 @@ class SpriteImage_FrozenDonutBlock(SLib.SpriteImage_Static):
         self.width = self.widthTiles * 16
 
         self.offset = (
-            -((self.widthTiles * 16) // 2) + (0 if self.widthTiles % 2 == 1 else 0),
+            (self.widthTiles * -8) + 8,
             0,
         )
 
@@ -271,11 +274,11 @@ class SpriteImage_FrozenDonutBlock(SLib.SpriteImage_Static):
             painter.drawTiledPixmap(tileSize, 0, totalWidth - tileSize * 2, tileSize, ImageCache['FrozenDonutM'])
             painter.drawPixmap(totalWidth - tileSize, 0, ImageCache['FrozenDonutR'])
 
-class SpriteImage_StringBank(SLib.SpriteImage_Static):
+class ZapSpriteImage_StringBank(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['StringBank'],
             (0, 0),
         )
@@ -284,11 +287,11 @@ class SpriteImage_StringBank(SLib.SpriteImage_Static):
     def loadImages():
         SLib.loadIfNotInImageCache('StringBank', 'string_bank.png')
 
-class SpriteImage_ActorSpawner(SLib.SpriteImage_Static):
+class ZapSpriteImage_ActorSpawner(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['ActorSpawner'],
             (0, 0),
         )
@@ -297,11 +300,11 @@ class SpriteImage_ActorSpawner(SLib.SpriteImage_Static):
     def loadImages():
         SLib.loadIfNotInImageCache('ActorSpawner', 'spawn.png')
 
-class SpriteImage_NybbleBank(SLib.SpriteImage_Static):
+class ZapSpriteImage_NybbleBank(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['NybbleBank'],
             (0, 0),
         )
@@ -310,24 +313,24 @@ class SpriteImage_NybbleBank(SLib.SpriteImage_Static):
     def loadImages():
         SLib.loadIfNotInImageCache('NybbleBank', 'nybble_bank.png')
 
-class SpriteImage_Clef(SLib.SpriteImage_Static):
+class ZapSpriteImage_Clef(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['Clef'],
-            (0, -16),
+            (0, -14),
         )
 
     @staticmethod
     def loadImages():
         SLib.loadIfNotInImageCache('Clef', 'clef.png')
 
-class SpriteImage_Note(SLib.SpriteImage_Static):
+class ZapSpriteImage_Note(SLib.SpriteImage_Static):
     def __init__(self, parent):
         super().__init__(
             parent,
-            4.0,
+            3.75,
             ImageCache['Note'],
             (0, 0),
         )
@@ -336,20 +339,34 @@ class SpriteImage_Note(SLib.SpriteImage_Static):
     def loadImages():
         SLib.loadIfNotInImageCache('Note', 'musicnote.png')
 
+class ZapSpriteImage_MagicPlatform(SLib.SpriteImage_Static):
+    def __init__(self, parent):
+        super().__init__(
+            parent,
+            3.75,
+            ImageCache['MagicPlatform'],
+            (-8, -8),
+        )
+
+    @staticmethod
+    def loadImages():
+        SLib.loadIfNotInImageCache('MagicPlatform', 'magic_platform.png')
+
 ImageClasses = {
-    "zap:cataquack": SpriteImage_Cataquack,
-    "zap:para_biddybud": SpriteImage_Biddybud,
-    "zap:flaptor": SpriteImage_Flaptor,
-    "zap:stingby": SpriteImage_Stingby,
-    "zap:flybones": SpriteImage_FlyBones,
-    "zap:timeclock": SpriteImage_TimeClock,
-    "zap:angrygrrrol": SpriteImage_AngryGrrrol,
-    "zap:donut_block": SpriteImage_DonutBlock,
-    "zap:frozen_donut_block": SpriteImage_FrozenDonutBlock,
-    "zap:string_bank": SpriteImage_StringBank,
-    "zap:actor_spawner_simple": SpriteImage_ActorSpawner,
-    "zap:actor_spawner_ex": SpriteImage_ActorSpawner,
-    "zap:nybble_bank": SpriteImage_NybbleBank,
-    "zap:clef": SpriteImage_Clef,
-    "zap:note": SpriteImage_Note,
+    "zap:cataquack": ZapSpriteImage_Cataquack,
+    "zap:para_biddybud": ZapSpriteImage_Biddybud,
+    "zap:flaptor": ZapSpriteImage_Flaptor,
+    "zap:stingby": ZapSpriteImage_Stingby,
+    "zap:flybones": ZapSpriteImage_FlyBones,
+    "zap:timeclock": ZapSpriteImage_TimeClock,
+    "zap:angrygrrrol": ZapSpriteImage_AngryGrrrol,
+    "zap:donut_block": ZapSpriteImage_DonutBlock,
+    "zap:frozen_donut_block": ZapSpriteImage_FrozenDonutBlock,
+    "zap:string_bank": ZapSpriteImage_StringBank,
+    "zap:actor_spawner_simple": ZapSpriteImage_ActorSpawner,
+    "zap:actor_spawner_ex": ZapSpriteImage_ActorSpawner,
+    "zap:nybble_bank": ZapSpriteImage_NybbleBank,
+    "zap:clef": ZapSpriteImage_Clef,
+    "zap:note": ZapSpriteImage_Note,
+    "zap:magicplatform": ZapSpriteImage_MagicPlatform,
 }

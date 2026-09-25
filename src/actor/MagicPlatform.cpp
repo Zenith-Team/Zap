@@ -24,6 +24,7 @@ const ActorCreateInfo zap::MagicPlatform::cCreateInfo = {
 
 Profile* zap::MagicPlatform::sProfile = zap::getRegistrar()->newProfile<zap::MagicPlatform>("magicplatform")
     .createInfo(cCreateInfo)
+    .executePriority(232) // aligns visuals with collision
     .build();
 
 zap::MagicPlatform::MagicPlatform(const ActorCreateParam& param)
@@ -33,6 +34,16 @@ zap::MagicPlatform::MagicPlatform(const ActorCreateParam& param)
 { }
 
 ActorBase::Result zap::MagicPlatform::create() {
+    // Movement setup
+    const u8 nybble20 = red::SpriteUtil::getNybble20(this);
+    if (nybble20 > cPos_KinokoLift) {
+        tk::fatal("Movement type was out of bounds");
+    }
+    const ParentMovementType movementType = static_cast<ParentMovementType>(nybble20);
+    u32 movementMask = mMovementMgr.getTypeMask(movementType);
+
+    setupMovement(mPos, movementMask, movementType, mParamEx.course.movement_id);
+
     // Setting: Location ID
     u8 locationID = (red::SpriteUtil::getNybble11(this) << 4) | red::SpriteUtil::getNybble12(this);
     
@@ -85,7 +96,14 @@ ActorBase::Result zap::MagicPlatform::create() {
         tk::fatal("MagicPlatform invalid surface type");
         return cResult_Failed;
     }
+
+    const u8 damageType = red::SpriteUtil::getNybbleRange(this, 13, 14);
+    if (damageType != 0 && damageType > PlayerBase::cDamageType_Num) {
+        tk::fatal("MagicPlatform invalid damage type");
+        return cResult_Failed;
+    }
     
+    // TODO! Make it crush the player
     switch (mCollisionType) {
         case cCollisionType_Solid: {
             mSolidCollider.set(this, {
@@ -98,6 +116,16 @@ ActorBase::Result zap::MagicPlatform::create() {
             
             mSolidCollider.setType(static_cast<BgCollision::Type>(interactionType));
             mSolidCollider.setAttr(static_cast<BgUnitCode::Attr>(surfaceType));
+
+            if (damageType != 0) {
+                // Subtract one from damageType, the spritedata uses the 0 value to denote no damage, so therefore all the settings are offset by one.
+                mDamageType = damageType - 1;
+                mSolidCollider.setCallback(
+                    &MagicPlatform::callbackFoot,
+                    &MagicPlatform::callbackHead,
+                    &MagicPlatform::callbackWall
+                );
+            }
             
             ActorBgCollisionMgr::instance()->entry(mSolidCollider);
             break;
@@ -119,31 +147,88 @@ ActorBase::Result zap::MagicPlatform::create() {
             mSemisolidCollider.setType(static_cast<BgCollision::Type>(interactionType));
             mSemisolidCollider.setAttr(static_cast<BgUnitCode::Attr>(surfaceType));
             
+            if (damageType != 0) {
+                // Subtract one from damageType, the spritedata uses the 0 value to denote no damage, so therefore all the settings are offset by one.
+                mDamageType = damageType - 1;
+                mSemisolidCollider.setCallback(
+                    &MagicPlatform::callbackFoot,
+                    &MagicPlatform::callbackHead,
+                    &MagicPlatform::callbackWall
+                );
+            }
+
             ActorBgCollisionMgr::instance()->entry(mSemisolidCollider);
             
             break;
         }
     }
     
-    // Setting: Movement Type
-    const u8 movementType = red::SpriteUtil::getNybble20(this);
-    if (movementType > ParentMovementType::cPos_KinokoLift) {
-        tk::fatal("MagicPlatform invalid movement type");
-        return cResult_Failed;
-    }
-    
-    u32 movementMask = mMovementMgr.getTypeMask(static_cast<ParentMovementType>(movementType));
-    
-    // Setting: Movement ID
-    mMovementMgr.link(mPos, movementMask, mParamEx.course.movement_id);
-    
     return cResult_Success;
+}
+
+void zap::MagicPlatform::setupMovement(const sead::Vector3f& position, u32 movement_mask, ParentMovementType movement_type, u32 movement_id) {
+    // use different link function if pivotal rotation, prevents glitches
+    if (movement_type == ParentMovementType::cPos_CenterRotation) {
+        ParentMovementMgr::PivotalRotationSettings pivotSettings;
+        pivotSettings.position       = position;
+        pivotSettings.movement_id    = movement_id;
+        pivotSettings.movement_mask  = movement_mask;
+        pivotSettings.pivot_center   = sead::Vector3f(0.0f, 0.0f, 0.0f);
+        pivotSettings.upside_down    = red::SpriteUtil::getNybble19(this) & 0x1;
+        pivotSettings.gyroscopic     = (red::SpriteUtil::getNybble19(this) >> 1) & 0x1;
+        pivotSettings.tilted         = (red::SpriteUtil::getNybble19(this) >> 2) & 0x1;
+        pivotSettings._21            = (red::SpriteUtil::getNybble19(this) >> 3) & 0x1;
+        pivotSettings.movement_param = 1;
+
+        mMovementMgr.linkPivotal2(pivotSettings);
+    } else {
+        mMovementMgr.link(position, movement_mask, movement_id);
+    }
+
+    // set type-specific data
+    setMovementParamaters(movement_type);
+
+    mMovementMgr.execute();
+}
+
+void zap::MagicPlatform::setMovementParamaters(ParentMovementType movement_type) {
+    static sead::SafeArray<f32, 16> twoWayDistanceMultiplierArr {
+        1.0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f
+    };
+    static sead::SafeArray<f32, 16> boltMovementSpeedArr {
+        1.0f, 0.25f, 0.5f, 0.75f, 0.0f, 1.5f, 2.0f, 2.5f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f
+    };
+
+    switch (movement_type) {
+        case cPos_Screw: {
+            mMovementMgr.setBoltSpeed(boltMovementSpeedArr[red::SpriteUtil::getNybble18(this)]);
+            mMovementMgr.setBoltDirection(static_cast<DirType>(red::SpriteUtil::getNybble19(this)));
+            break;
+        }
+        case cPos_GoAndCome: {
+            mMovementMgr.setTwoWayDistanceMultiplier(twoWayDistanceMultiplierArr[red::SpriteUtil::getNybble18(this)] + (0.01f * red::SpriteUtil::getNybble19(this)));
+            break;
+        }
+        case cPos_ShiftingPlatform: {
+            mMovementMgr.setRectPlatformInfo(static_cast<RectPlatformInfo>(red::SpriteUtil::getNybble19(this)));
+            break;
+        }
+        case cPos_FloorGyration: {
+            mMovementMgr.setFloorGyrationAngle(0x1000000 * red::SpriteUtil::getNybbleRange(this, 17, 18));
+            ParentMovementMgr::MovementProperties newproperty = mMovementMgr.getMovementProperties();
+            newproperty.hill_distance_offset = -16.0f * red::SpriteUtil::getNybble19(this);
+            mMovementMgr.setMovementProperties(newproperty);
+            break;
+        }
+    }
 }
 
 bool zap::MagicPlatform::execute() {
     mMovementMgr.execute();
     mPos = mMovementMgr.getPosition();
-    mAngle.z() = mMovementMgr.getAngle();
+    if (!mMovementMgr.getPivotalGyroscopic()) {
+        mAngle.z() = mMovementMgr.getAngle();
+    }
     
     switch (mCollisionType) {
         case cCollisionType_Solid: {
@@ -180,4 +265,32 @@ bool zap::MagicPlatform::draw() {
     }
     
     return true;
+}
+
+void zap::MagicPlatform::callbackFoot(BgCollision* bc_self, ActorBgCollisionCheck* cc_other) {
+    MagicPlatform* self = (MagicPlatform*)bc_self->getOwner();
+    Actor* other = cc_other->getOwner();
+    if (other->getKind() == cActorKind_Player || other->getKind() == cActorKind_Yoshi) {
+        self->callbackGeneral(self, static_cast<PlayerObject*>(other));
+    }
+}
+
+void zap::MagicPlatform::callbackHead(BgCollision* bc_self, ActorBgCollisionCheck* cc_other) {
+    MagicPlatform* self = (MagicPlatform*)bc_self->getOwner();
+    Actor* other = cc_other->getOwner();
+    if (other->getKind() == cActorKind_Player || other->getKind() == cActorKind_Yoshi) {
+        self->callbackGeneral(self, static_cast<PlayerObject*>(other));
+    }
+}
+
+void zap::MagicPlatform::callbackWall(BgCollision* bc_self, ActorBgCollisionCheck* cc_other, u8 direction) {
+    MagicPlatform* self = (MagicPlatform*)bc_self->getOwner();
+    Actor* other = cc_other->getOwner();
+    if (other->getKind() == cActorKind_Player || other->getKind() == cActorKind_Yoshi) {
+        self->callbackGeneral(self, static_cast<PlayerObject*>(other));
+    }
+}
+
+void zap::MagicPlatform::callbackGeneral(MagicPlatform* self, PlayerObject* other) {
+    other->setDamage(self, static_cast<PlayerBase::DamageType>(self->mDamageType));
 }

@@ -23,6 +23,61 @@
 		<checkbox nybble="13" title="Subtract time" comment="Bad clock" category="behavior"/>
 		<checkbox nybble="14" title="Small clock" category="behavior"/>
 
+		<list nybble="18" title="Bolt Movement Speed" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">1.0</entry>
+			<entry value="4">0.0</entry>
+			<entry value="1">0.25</entry>
+			<entry value="2">0.5</entry>
+			<entry value="3">0.75</entry>
+            <entry value="0">1.0</entry>
+			<entry value="5">1.5</entry>
+			<entry value="6">2.0</entry>
+			<entry value="7">2.5</entry>
+			<entry value="8">3.0</entry>
+			<entry value="9">4.0</entry>
+			<entry value="10">5.0</entry>
+			<entry value="11">6.0</entry>
+			<entry value="12">7.0</entry>
+			<entry value="13">8.0</entry>
+			<entry value="14">9.0</entry>
+			<entry value="15">10.0</entry>
+		</list>
+        <list nybble="19" title="Bolt Direction" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">Right</entry>
+            <entry value="1">Left</entry>
+            <entry value="2">Up</entry>
+            <entry value="3">Down</entry>
+        </list>
+
+		<list nybble="18" title="Distance Multiplier" category="movement" requirednybble="20.1" requiredval="4">
+            <entry value="0">1.0</entry>
+            <entry value="1">0.1</entry>
+            <entry value="2">0.2</entry>
+            <entry value="3">0.3</entry>
+            <entry value="4">0.4</entry>
+            <entry value="5">0.5</entry>
+            <entry value="6">0.6</entry>
+            <entry value="7">0.7</entry>
+            <entry value="8">0.8</entry>
+            <entry value="9">0.9</entry>
+            <entry value="10">1.0</entry>
+            <entry value="11">1.1</entry>
+            <entry value="12">1.2</entry>
+            <entry value="13">1.3</entry>
+            <entry value="14">1.4</entry>
+            <entry value="15">1.5</entry>
+        </list>
+        <value nybble="19" title="Distance Multiplier (added)" comment="Value / 100" category="movement" requirednybble="20.1" requiredval="4"/>
+
+        <list nybble="19" title="Rectangle Platform Info" category="movement" requirednybble="20.1" requiredval="8">
+            <entry value="0">Follow Top platform</entry>
+            <entry value="1">Follow Bottom platform</entry>
+            <entry value="2">Doesn't move</entry>
+        </list>
+
+		<value nybble="19" title="Hill Distance" category="movement" requirednybble="20.1" requiredval="10"/>
+		<value nybble="17-18" title="Hill Angle" category="movement" requirednybble="20.1" requiredval="10"/>
+
 		<list nybble="20" title="Movement Type" category="movement">
 			<entry value="0">None</entry>
 			<entry value="1">Sway Or Spin (68, 69, 116, 118)</entry>
@@ -65,6 +120,62 @@
             <entry value="3">Blue</entry>
             <entry value="4">Pink</entry>
         </list>
+
+		<list nybble="18" title="Bolt Movement Speed" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">1.0</entry>
+			<entry value="4">0.0</entry>
+			<entry value="1">0.25</entry>
+			<entry value="2">0.5</entry>
+			<entry value="3">0.75</entry>
+            <entry value="0">1.0</entry>
+			<entry value="5">1.5</entry>
+			<entry value="6">2.0</entry>
+			<entry value="7">2.5</entry>
+			<entry value="8">3.0</entry>
+			<entry value="9">4.0</entry>
+			<entry value="10">5.0</entry>
+			<entry value="11">6.0</entry>
+			<entry value="12">7.0</entry>
+			<entry value="13">8.0</entry>
+			<entry value="14">9.0</entry>
+			<entry value="15">10.0</entry>
+		</list>
+        <list nybble="19" title="Bolt Direction" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">Right</entry>
+            <entry value="1">Left</entry>
+            <entry value="2">Up</entry>
+            <entry value="3">Down</entry>
+        </list>
+
+		<list nybble="18" title="Distance Multiplier" category="movement" requirednybble="20.1" requiredval="4">
+            <entry value="0">1.0</entry>
+            <entry value="1">0.1</entry>
+            <entry value="2">0.2</entry>
+            <entry value="3">0.3</entry>
+            <entry value="4">0.4</entry>
+            <entry value="5">0.5</entry>
+            <entry value="6">0.6</entry>
+            <entry value="7">0.7</entry>
+            <entry value="8">0.8</entry>
+            <entry value="9">0.9</entry>
+            <entry value="10">1.0</entry>
+            <entry value="11">1.1</entry>
+            <entry value="12">1.2</entry>
+            <entry value="13">1.3</entry>
+            <entry value="14">1.4</entry>
+            <entry value="15">1.5</entry>
+        </list>
+        <value nybble="19" title="Distance Multiplier (added)" comment="Value / 100" category="movement" requirednybble="20.1" requiredval="4"/>
+
+        <list nybble="19" title="Rectangle Platform Info" category="movement" requirednybble="20.1" requiredval="8">
+            <entry value="0">Follow Top platform</entry>
+            <entry value="1">Follow Bottom platform</entry>
+            <entry value="2">Doesn't move</entry>
+        </list>
+
+		<value nybble="19" title="Hill Distance" category="movement" requirednybble="20.1" requiredval="10"/>
+		<value nybble="17-18" title="Hill Angle" category="movement" requirednybble="20.1" requiredval="10"/>
+
 		<list nybble="20" title="Movement Type" category="movement">
 			<entry value="0">None</entry>
 			<entry value="1">Sway Or Spin (68, 69, 116, 118)</entry>
@@ -95,6 +206,62 @@
             <entry value="7">Second C</entry>
         </list> -->
 		<checkbox nybble="4" title="Randomize Texture" comment="Starts the rainbow texture on a random color" category="visual"/> 
+
+		<list nybble="18" title="Bolt Movement Speed" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">1.0</entry>
+			<entry value="4">0.0</entry>
+			<entry value="1">0.25</entry>
+			<entry value="2">0.5</entry>
+			<entry value="3">0.75</entry>
+            <entry value="0">1.0</entry>
+			<entry value="5">1.5</entry>
+			<entry value="6">2.0</entry>
+			<entry value="7">2.5</entry>
+			<entry value="8">3.0</entry>
+			<entry value="9">4.0</entry>
+			<entry value="10">5.0</entry>
+			<entry value="11">6.0</entry>
+			<entry value="12">7.0</entry>
+			<entry value="13">8.0</entry>
+			<entry value="14">9.0</entry>
+			<entry value="15">10.0</entry>
+		</list>
+        <list nybble="19" title="Bolt Direction" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">Right</entry>
+            <entry value="1">Left</entry>
+            <entry value="2">Up</entry>
+            <entry value="3">Down</entry>
+        </list>
+
+		<list nybble="18" title="Distance Multiplier" category="movement" requirednybble="20.1" requiredval="4">
+            <entry value="0">1.0</entry>
+            <entry value="1">0.1</entry>
+            <entry value="2">0.2</entry>
+            <entry value="3">0.3</entry>
+            <entry value="4">0.4</entry>
+            <entry value="5">0.5</entry>
+            <entry value="6">0.6</entry>
+            <entry value="7">0.7</entry>
+            <entry value="8">0.8</entry>
+            <entry value="9">0.9</entry>
+            <entry value="10">1.0</entry>
+            <entry value="11">1.1</entry>
+            <entry value="12">1.2</entry>
+            <entry value="13">1.3</entry>
+            <entry value="14">1.4</entry>
+            <entry value="15">1.5</entry>
+        </list>
+        <value nybble="19" title="Distance Multiplier (added)" comment="Value / 100" category="movement" requirednybble="20.1" requiredval="4"/>
+
+        <list nybble="19" title="Rectangle Platform Info" category="movement" requirednybble="20.1" requiredval="8">
+            <entry value="0">Follow Top platform</entry>
+            <entry value="1">Follow Bottom platform</entry>
+            <entry value="2">Doesn't move</entry>
+        </list>
+
+		<value nybble="19" title="Hill Distance" category="movement" requirednybble="20.1" requiredval="10"/>
+		<value nybble="17-18" title="Hill Angle" category="movement" requirednybble="20.1" requiredval="10"/>
+
         <list nybble="20" title="Movement Type" category="movement">
 			<entry value="0">None</entry>
 			<entry value="1">Sway Or Spin (68, 69, 116, 118)</entry>
@@ -131,6 +298,61 @@
 		<value nybble="9" title="Allowed Retries" comment="The clef respawns and allows the player to re-attempt the minigame" category="behavior"/>
 		
 		<value nybble="10-11" title="Target Event ID (Game won)" id_type="event" category="events"/>
+
+		<list nybble="18" title="Bolt Movement Speed" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">1.0</entry>
+			<entry value="4">0.0</entry>
+			<entry value="1">0.25</entry>
+			<entry value="2">0.5</entry>
+			<entry value="3">0.75</entry>
+            <entry value="0">1.0</entry>
+			<entry value="5">1.5</entry>
+			<entry value="6">2.0</entry>
+			<entry value="7">2.5</entry>
+			<entry value="8">3.0</entry>
+			<entry value="9">4.0</entry>
+			<entry value="10">5.0</entry>
+			<entry value="11">6.0</entry>
+			<entry value="12">7.0</entry>
+			<entry value="13">8.0</entry>
+			<entry value="14">9.0</entry>
+			<entry value="15">10.0</entry>
+		</list>
+        <list nybble="19" title="Bolt Direction" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">Right</entry>
+            <entry value="1">Left</entry>
+            <entry value="2">Up</entry>
+            <entry value="3">Down</entry>
+        </list>
+
+		<list nybble="18" title="Distance Multiplier" category="movement" requirednybble="20.1" requiredval="4">
+            <entry value="0">1.0</entry>
+            <entry value="1">0.1</entry>
+            <entry value="2">0.2</entry>
+            <entry value="3">0.3</entry>
+            <entry value="4">0.4</entry>
+            <entry value="5">0.5</entry>
+            <entry value="6">0.6</entry>
+            <entry value="7">0.7</entry>
+            <entry value="8">0.8</entry>
+            <entry value="9">0.9</entry>
+            <entry value="10">1.0</entry>
+            <entry value="11">1.1</entry>
+            <entry value="12">1.2</entry>
+            <entry value="13">1.3</entry>
+            <entry value="14">1.4</entry>
+            <entry value="15">1.5</entry>
+        </list>
+        <value nybble="19" title="Distance Multiplier (added)" comment="Value / 100" category="movement" requirednybble="20.1" requiredval="4"/>
+
+        <list nybble="19" title="Rectangle Platform Info" category="movement" requirednybble="20.1" requiredval="8">
+            <entry value="0">Follow Top platform</entry>
+            <entry value="1">Follow Bottom platform</entry>
+            <entry value="2">Doesn't move</entry>
+        </list>
+
+		<value nybble="19" title="Hill Distance" category="movement" requirednybble="20.1" requiredval="10"/>
+		<value nybble="17-18" title="Hill Angle" category="movement" requirednybble="20.1" requiredval="10"/>
 
         <list nybble="20" title="Movement Type" category="movement">
 			<entry value="0">None</entry>
@@ -255,6 +477,91 @@
 			<entry value="11">Water</entry>
 			<entry value="12">Beanstalk Leaf</entry>
 		</list>
+
+		<list nybble="13-14" title="Damage type*" comment="*Doesn't work with the &quot;None&quot; collider type; Instead, try using the &quot;Urchin&quot; interaction type to achieve a similar outcome. Set the kind of damage that gets dealt. Names are ripped directly from the PlayerBase header, so they might be ambiguous">
+			<entry value="0">None</entry>
+			<entry value="1">Hit</entry>
+			<entry value="2">Hit2</entry>
+			<entry value="3">HitKnock</entry>
+			<entry value="4">Hit3</entry>
+			<entry value="5">Knock</entry>
+			<entry value="6">Knock2</entry>
+			<entry value="7">SmallKnock</entry>
+			<entry value="8">SmallKnock2</entry>
+			<entry value="9">SmallKnock3</entry>
+			<entry value="10">Fire</entry>
+			<entry value="11">Fire2</entry>
+			<entry value="12">Ice</entry>
+			<entry value="13">Ice2</entry>
+			<entry value="14">Spark</entry>
+			<entry value="15">Poison</entry>
+			<entry value="16">Kill</entry>
+			<entry value="17">DeathCloud</entry>
+			<entry value="18">Eaten</entry>
+			<entry value="19">Eaten2</entry>
+			<entry value="20">SteppedOn</entry>
+		</list>
+		
+		<checkbox nybble="19" mask="1" title="Upside Down" category="movement" requirednybble="20.1" requiredval="1"/>
+		<checkbox nybble="19" mask="2" title="Gyroscopic Movement" category="movement" requirednybble="20.1" requiredval="1"/>
+		<checkbox nybble="19" mask="4" title="Tilted" category="movement" requirednybble="20.1" requiredval="1"/>
+		<checkbox nybble="19" mask="8" title="Unknown Value 6 Mask 8" category="movement" requirednybble="20.1" requiredval="1"/>
+
+		<list nybble="18" title="Bolt Movement Speed" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">1.0</entry>
+			<entry value="4">0.0</entry>
+			<entry value="1">0.25</entry>
+			<entry value="2">0.5</entry>
+			<entry value="3">0.75</entry>
+            <entry value="0">1.0</entry>
+			<entry value="5">1.5</entry>
+			<entry value="6">2.0</entry>
+			<entry value="7">2.5</entry>
+			<entry value="8">3.0</entry>
+			<entry value="9">4.0</entry>
+			<entry value="10">5.0</entry>
+			<entry value="11">6.0</entry>
+			<entry value="12">7.0</entry>
+			<entry value="13">8.0</entry>
+			<entry value="14">9.0</entry>
+			<entry value="15">10.0</entry>
+		</list>
+        <list nybble="19" title="Bolt Direction" category="movement" requirednybble="20.1" requiredval="2">
+            <entry value="0">Right</entry>
+            <entry value="1">Left</entry>
+            <entry value="2">Up</entry>
+            <entry value="3">Down</entry>
+        </list>
+
+		<list nybble="18" title="Distance Multiplier" category="movement" requirednybble="20.1" requiredval="4">
+            <entry value="0">1.0</entry>
+            <entry value="1">0.1</entry>
+            <entry value="2">0.2</entry>
+            <entry value="3">0.3</entry>
+            <entry value="4">0.4</entry>
+            <entry value="5">0.5</entry>
+            <entry value="6">0.6</entry>
+            <entry value="7">0.7</entry>
+            <entry value="8">0.8</entry>
+            <entry value="9">0.9</entry>
+            <entry value="10">1.0</entry>
+            <entry value="11">1.1</entry>
+            <entry value="12">1.2</entry>
+            <entry value="13">1.3</entry>
+            <entry value="14">1.4</entry>
+            <entry value="15">1.5</entry>
+        </list>
+        <value nybble="19" title="Distance Multiplier (added)" comment="Value / 100" category="movement" requirednybble="20.1" requiredval="4"/>
+
+        <list nybble="19" title="Rectangle Platform Info" category="movement" requirednybble="20.1" requiredval="8">
+            <entry value="0">Follow Top platform</entry>
+            <entry value="1">Follow Bottom platform</entry>
+            <entry value="2">Doesn't move</entry>
+        </list>
+
+		<value nybble="19" title="Hill Distance" category="movement" requirednybble="20.1" requiredval="10"/>
+		<value nybble="17-18" title="Hill Angle" category="movement" requirednybble="20.1" requiredval="10"/>
+
 		<list nybble="20" title="Movement Type" category="movement">
 			<entry value="0">None</entry>
 			<entry value="1">Sway Or Spin (68, 69, 116, 118)</entry>

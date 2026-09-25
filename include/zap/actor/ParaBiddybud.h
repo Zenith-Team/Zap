@@ -22,6 +22,9 @@ public:
     bool execute() override;
     bool draw() override;
 
+    void setupMovement(const sead::Vector3f& position, u32 movement_mask, ParentMovementType movement_type, u32 movement_id);
+    void setMovementParamaters(ParentMovementType movement_type);
+
     bool createIceActor() override;
     void calcMdl_Base() override;
 

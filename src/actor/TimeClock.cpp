@@ -74,6 +74,16 @@ zap::TimeClock::TimeClock(const ActorCreateParam& param)
 { }
 
 ActorBase::Result zap::TimeClock::create() {
+    // Movement setup
+    const u8 nybble20 = red::SpriteUtil::getNybble20(this);
+    if (nybble20 > cPos_KinokoLift) {
+        tk::fatal("Movement type was out of bounds");
+    }
+    const ParentMovementType movementType = static_cast<ParentMovementType>(nybble20);
+    u32 movementMask = mMovementHandler.getTypeMask(movementType);
+
+    setupMovement(mPos, movementMask, movementType, mParamEx.course.movement_id);
+
     // Model
     mModel = AnimModel::create("timeclock", "timeclockA", 0, 1);
     
@@ -115,15 +125,6 @@ ActorBase::Result zap::TimeClock::create() {
     // use bonus anim
     mUseCollectAnim = red::SpriteUtil::getNybble2(this);
     
-    // Movement setup
-    const u8 nybble20 = red::SpriteUtil::getNybble20(this);
-    if (nybble20 > cPos_KinokoLift) {
-        tk::fatal("Movement type was out of bounds");
-    }
-    const ParentMovementType movementType = static_cast<ParentMovementType>(nybble20);
-    u32 movementMask = mMovementHandler.getTypeMask(movementType);
-    mMovementHandler.link(mPos, movementMask, mParamEx.course.movement_id); // nybble 21-22
-    
     // Event IDs
     mReactivationEvent = (red::SpriteUtil::getNybble5(this) << 4) | red::SpriteUtil::getNybble6(this);
     mCollectionEvent = (red::SpriteUtil::getNybble7(this) << 4) | red::SpriteUtil::getNybble8(this);
@@ -144,9 +145,60 @@ ActorBase::Result zap::TimeClock::create() {
     return cResult_Success;
 }
 
+void zap::TimeClock::setupMovement(const sead::Vector3f& position, u32 movement_mask, ParentMovementType movement_type, u32 movement_id) {
+    // use different link function if pivotal rotation, prevents glitches
+    if (movement_type == ParentMovementType::cPos_CenterRotation) {
+        mMovementHandler.linkPivotal(mPos, movement_mask, movement_id);
+    } else {
+        mMovementHandler.link(mPos, movement_mask, movement_id);
+    }
+
+    // set type-specific data
+    setMovementParamaters(movement_type);
+
+    mMovementHandler.execute();
+}
+
+void zap::TimeClock::setMovementParamaters(ParentMovementType movement_type) {
+    static sead::SafeArray<f32, 16> twoWayDistanceMultiplierArr {
+        1.0f, 0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 1.1f, 1.2f, 1.3f, 1.4f, 1.5f
+    };
+    static sead::SafeArray<f32, 16> boltMovementSpeedArr {
+        1.0f, 0.25f, 0.5f, 0.75f, 0.0f, 1.5f, 2.0f, 2.5f, 3.0f, 4.0f, 5.0f, 6.0f, 7.0f, 8.0f, 9.0f, 10.0f
+    };
+
+    switch (movement_type) {
+        case cPos_Screw: {
+            mMovementHandler.setBoltSpeed(boltMovementSpeedArr[red::SpriteUtil::getNybble18(this)]);
+            mMovementHandler.setBoltDirection(static_cast<DirType>(red::SpriteUtil::getNybble19(this)));
+            break;
+        }
+        case cPos_GoAndCome: {
+            mMovementHandler.setTwoWayDistanceMultiplier(twoWayDistanceMultiplierArr[red::SpriteUtil::getNybble18(this)] + (0.01f * red::SpriteUtil::getNybble19(this)));
+            break;
+        }
+        case cPos_ShiftingPlatform: {
+            mMovementHandler.setRectPlatformInfo(static_cast<RectPlatformInfo>(red::SpriteUtil::getNybble19(this)));
+            break;
+        }
+        case cPos_FloorGyration: {
+            mMovementHandler.setFloorGyrationAngle(0x1000000 * red::SpriteUtil::getNybbleRange(this, 17, 18));
+            ParentMovementMgr::MovementProperties newproperty = mMovementHandler.getMovementProperties();
+            newproperty.hill_distance_offset = -16.0f * red::SpriteUtil::getNybble19(this);
+            mMovementHandler.setMovementProperties(newproperty);
+            break;
+        }
+    }
+}
+
 bool zap::TimeClock::execute() {
     // Delete when offscreen
     screenOutCheck(0);
+
+    // handle movement
+    mMovementHandler.execute();
+    mPos.x = mMovementHandler.getPosition().x;
+    mPos.y = mMovementHandler.getPosition().y;
 
     updateModel();
 

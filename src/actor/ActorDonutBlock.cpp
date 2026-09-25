@@ -19,6 +19,7 @@ const ActorCreateInfo zap::ActorDonutBlock::cCreateInfo = {
 Profile* zap::ActorDonutBlock::sProfile = zap::getRegistrar()->newProfile<zap::ActorDonutBlock>("donut_block")
     .resources<"obj_chikuwa_block", "obj_widedn2_block", "obj_widedn3_block">(ProfileInfo::cResType_Course)
     .flag(Profile::cFlag_DrawCullCheck)
+    .executePriority(232) // aligns visuals with collision
     .createInfo(cCreateInfo)
     .build();
 
@@ -51,8 +52,10 @@ void zap::ActorDonutBlock::loadActorRes() {
         "obj_widedn3_block"
     };
     
-    mModel = AnimModel::create(cResources[mLength], cResources[mLength], 2, 2, 2, 2, 2);
+    mModel = AnimModel::create(cResources[mLength], cResources[mLength], 1, 1);
+    mModel->playTexAnim(cResources[mLength]);
     mTexAnim = mModel->getTexAnim(0);
     mTexAnim->getFrameCtrl().setPlayMode(FrameCtrl::cMode_NoRepeat);
-    mTexAnim->getFrameCtrl().setFrame(0.0f);
+    mTexAnim->getFrameCtrl().setFrame(1.0f);
+    mTexAnim->getFrameCtrl().setRate(0.0f);
 }
