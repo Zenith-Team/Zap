@@ -102,7 +102,7 @@ bool zap::Cataquack::execute() {
     this->executeState();
     this->landonEffect();
     this->calcMdl_Normal();
-    this->screenOutCheck(0);
+    this->screenOutCheck(cScreenOutFlag_SkipNone);
 
     // TODO: proper drowning animation
     if (this->mIsSubmerged) {

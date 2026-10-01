@@ -114,7 +114,7 @@ ActorBase::Result zap::Stingby::create() {
 
 bool zap::Stingby::execute() {
     // Delete when offscreen
-    screenOutCheck(0);
+    screenOutCheck(cScreenOutFlag_SkipNone);
     
     executeState();
     

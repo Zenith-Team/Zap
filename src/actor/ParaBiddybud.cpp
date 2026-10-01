@@ -154,7 +154,7 @@ bool zap::ParaBiddybud::execute() {
     }
 
     // Delete when offscreen
-    screenOutCheck(0);
+    screenOutCheck(cScreenOutFlag_SkipNone);
     
     executeState();
 

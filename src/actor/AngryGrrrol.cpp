@@ -95,7 +95,7 @@ ActorBase::Result zap::AngryGrrrol::create() {
 
 bool zap::AngryGrrrol::execute() {
     // Delete when offscreen
-    screenOutCheck(0);
+    screenOutCheck(cScreenOutFlag_SkipNone);
     
     // Chase player
     

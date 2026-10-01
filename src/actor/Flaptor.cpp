@@ -110,7 +110,7 @@ ActorBase::Result zap::Flaptor::create() {
 
 bool zap::Flaptor::execute() {
     // Delete when offscreen
-    screenOutCheck(0);
+    screenOutCheck(cScreenOutFlag_SkipNone);
     
     executeState();
     

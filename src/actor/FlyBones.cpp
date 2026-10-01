@@ -101,7 +101,7 @@ ActorBase::Result zap::FlyBones::create() {
 
 bool zap::FlyBones::execute() {
     // Delete when offscreen
-    screenOutCheck(0);
+    screenOutCheck(cScreenOutFlag_SkipNone);
     
     executeState();
     

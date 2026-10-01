@@ -193,7 +193,7 @@ void zap::TimeClock::setMovementParamaters(ParentMovementType movement_type) {
 
 bool zap::TimeClock::execute() {
     // Delete when offscreen
-    screenOutCheck(0);
+    screenOutCheck(cScreenOutFlag_SkipNone);
 
     // handle movement
     mMovementHandler.execute();
