@@ -7,6 +7,12 @@ namespace zap {
 class ActorSpawnerEx : public Actor {
     SEAD_RTTI_OVERRIDE(ActorSpawnerEx, Actor);
 
+    enum SpawnerMode {
+        cSpawnerMode_SingleUse = 0,
+        cSpawnerMode_MultiUse,
+        cSpawnerMode_Linked,
+    };
+
 public:
     static Profile* sProfile;
     
@@ -29,10 +35,11 @@ private:
     u8 mStringScanAttempt;
     u8 mNybbleScanAttempt;
     bool mSpawned;
-    bool mMultiUse;
+    SpawnerMode mSpawnerMode;
     bool mPrevFrameEvent;
     ActorUniqueID mNybbleBank;
     sead::Vector3f mStartPos;
+    ActorUniqueID mChildActor;
 };
 
 } // namespace zap

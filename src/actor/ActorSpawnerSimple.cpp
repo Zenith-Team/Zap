@@ -71,7 +71,7 @@ bool zap::ActorSpawnerSimple::execute() {
         child.profile = red::ProfileEx::get(mSpawnProfileID);
 
         const ActorCreateInfo& info = child.profile->getActorCreateInfo();
-        child.position = mPos - sead::Vector3f(info.offset_x, info.offset_y, 0.0f); // account for spawn offs
+        child.position = mPos + sead::Vector3f(info.offset_x, info.offset_y, 0.0f); // account for spawn offs
 
         // nybble 1 is inaccessible
         

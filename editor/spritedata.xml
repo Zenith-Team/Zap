@@ -641,9 +641,10 @@
 	</sprite>
 	
 	<sprite string_id="zap:nybble_bank" name="Nybble Bank" notes="Empty actor which simply holds data for use by Actor Spawners">
+		<initialstate title="Nybble Bank ID" comment="ID of the bank for use with other actors. Anything that uses the Nybble Bank must pass an initial state value some other way." id_type="nybble_bank" type="value"/>
 	</sprite>
 
-	<sprite string_id="zap:actor_spawner_ex" name="Actor Spawner (Extended)" notes="An advanced version of the Actor Spawner with more capabilities. Use a Nybble Bank placed one tile to the right of this actor to link it up and configure settings for the spawned actor.">
+	<sprite string_id="zap:actor_spawner_ex" name="Actor Spawner (Extended)" notes="An advanced version of the Actor Spawner with more capabilities. Use a linked Nybble Bank to configure settings for the spawned actor.">
 		<value nybble="1-2" title="Triggering Event ID" id_type="event" category="events"/>
 		<list nybble="5" title="ID Type" category="behavior">
 			<entry value="0">Sprite ID</entry>
@@ -653,8 +654,16 @@
 		
 		<value nybble="6-8" title="Sprite ID" category="behavior" requirednybble="5" requiredval="0"/>
 		<value nybble="6-8" title="Profile ID" category="behavior" requirednybble="5" requiredval="1"/>
-		<value nybble="6" title="String Bank ID" comment="ID to link with a String Bank containing the namespaced string ID of the actor to spawn." id_type="string_bank" category="behavior" requirednybble="5" requiredval="2"/>
-		
-		<checkbox nybble="9" title="Multi-use" category="behavior"/>
+		<value nybble="7-8" title="String Bank ID" comment="ID to link with a String Bank containing the namespaced string ID of the actor to spawn." id_type="string_bank" category="behavior" requirednybble="5" requiredval="2"/>
+
+		<list nybble="9" title="Usage Mode" category="behavior">
+            <entry value="0">Single Use</entry>
+            <entry value="1">Multi Use</entry>
+            <entry value="2">Despawn When Event is Deactivated</entry>
+        </list>
+
+		<value nybble="10-11" title="Nybble Bank ID" comment="ID to link with a Nybble Bank containing the parameters of the actor to spawn." id_type="nybble_bank" category="behavior"/>
+
+		<initialstate title="Child Actor Initial State" comment="The initial state value to get passed to the spawned actor." type="value" category="behavior"/>
 	</sprite>
 </sprites>
