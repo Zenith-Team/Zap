@@ -111,7 +111,7 @@ bool zap::ActorSpawnerEx::execute() {
         const ActorCreateInfo& info = child.profile->getActorCreateInfo();
         // Handle Z offset for spawning on other layers
         // Setup copied from ActorCreateMgr::spawnSpriteActor
-        float zOffset = 0.0f;
+        f32 zOffset = 0.0f;
         if (info.flag & ActorCreateInfo::cFlag_MapObj) {
             if (child.param_ex_0.course.layer == LayerID::cLayerID_Layer1) {
                 zOffset = 400.0f;
@@ -189,7 +189,7 @@ bool zap::ActorSpawnerEx::scanNybble() {
     }
 
     ActorMgr* actorMgr = ActorMgr::instance();
-    
+
     for (auto it = actorMgr->getActorBegin(); it != actorMgr->getActorEnd(); it++) {
         if (NybbleBank* bank = sead::DynamicCast<NybbleBank>(*it)) {
             if (bank->getParamEx().course.init_state_flag == nybbleBankID) {
