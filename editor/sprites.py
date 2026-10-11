@@ -187,7 +187,7 @@ class ZapSpriteImage_AngryGrrrol(SLib.SpriteImage_Static):
             parent,
             3.75,
             ImageCache['AngryGrrrol'],
-            (0, 0),
+            (-4, -4),
         )
 
     @staticmethod
