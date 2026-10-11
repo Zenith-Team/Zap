@@ -186,8 +186,12 @@ void zap::AngryGrrrol::calcMdl_Base() {
 }
 
 void zap::AngryGrrrol::vsYoshiHitCheck_Normal(ActorCollisionCheck* cc_self, ActorCollisionCheck* cc_other) {
-    FumiType fumiType = fumiCheck(cc_self, cc_other, cFumiSeType_Step);
-    if (fumiType == cFumiType_Hit) {
+    if (red::SpriteUtil::getNybble9(this) != 0) {
+        FumiType fumiType = fumiCheck(cc_self, cc_other, cFumiSeType_Step);
+        if (fumiType == cFumiType_Hit) {
+            return Enemy::vsYoshiHitCheck_Normal(cc_self, cc_other);
+        }
+    } else {
         return Enemy::vsYoshiHitCheck_Normal(cc_self, cc_other);
     }
 }
@@ -248,15 +252,13 @@ void zap::AngryGrrrol::yoshiFumiScoreSet(Actor* player) { }
 
 s16 zap::AngryGrrrol::calculateSoundVolume() {
     // Calculate volume based on speed
-    s16 soundVolume = 0;
-    float absSpeedX = sead::Mathf::abs(mSpeed.x);
-    float absSpeedY = sead::Mathf::abs(mSpeed.y);
+    f32 absSpeedX = sead::Mathf::abs(mSpeed.x);
+    f32 absSpeedY = sead::Mathf::abs(mSpeed.y);
     if (absSpeedY <= absSpeedX) {
-        soundVolume = absSpeedX * 10.0f;
+        return absSpeedX * 10.0f;
     } else {
-        soundVolume = absSpeedY * 10.0f;
+        return absSpeedY * 10.0f;
     }
-    return soundVolume;
 }
 
 void zap::AngryGrrrol::waterSplashEffect() {

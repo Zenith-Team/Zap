@@ -95,6 +95,7 @@
 	</sprite>
 	
 	<sprite string_id="zap:angrygrrrol" name="Angry Grrrol">
+		<checkbox nybble="9" title="Allow Yoshi Interaction" comment="When enabled, Yoshi will bounce off the Angry Grrrol." category="behavior"/>
 		<value nybble="5" title="Maximum Speed" category="behavior"/>
 		<value nybble="6" title="Acceleration" category="behavior"/>
 		<checkbox nybble="7" title="Break Blocks (Sides)" comment="Destroys blocks on collision from the side." category="behavior"/>
