@@ -82,7 +82,7 @@ bool zap::ActorSpawnerEx::execute() {
         }
     }
     
-    if (!mNybbleBank.isValid()) {
+    if (!mNybbleBank.isValid() && mNybbleScanAttempt < 6) {
         if (!scanNybble()) {
             return true;
         }
@@ -98,17 +98,14 @@ bool zap::ActorSpawnerEx::execute() {
         child.profile = red::ProfileEx::get(mSpawnProfileID);
 
         const Actor* nybbleBank = ActorMgr::instance()->getActorPtr<Actor>(mNybbleBank);
-        if (nybbleBank == nullptr) [[unlikely]] {
-            tk::fatal("ActorSpawnerEx: Nybble Bank was lost!");
-        }
         
-        child.param_0 = nybbleBank->getParam0();
-        child.param_1 = nybbleBank->getParam1();
-        child.param_ex_0.course.switch_flag_0 = nybbleBank->getSwitchFlag0();
-        child.param_ex_0.course.switch_flag_1 = nybbleBank->getSwitchFlag1();
-        child.param_ex_0.course.layer = nybbleBank->getLayer();
-        child.param_ex_1.course.movement_id = nybbleBank->getParamEx().course.movement_id;
-        child.param_ex_1.course.link_id = nybbleBank->getParamEx().course.link_id;
+        child.param_0 = mNybbleBank.isValid() ? nybbleBank->getParam0() : 0;
+        child.param_1 = mNybbleBank.isValid() ? nybbleBank->getParam1() : 0;
+        child.param_ex_0.course.switch_flag_0 = mNybbleBank.isValid() ? nybbleBank->getSwitchFlag0() : 0;
+        child.param_ex_0.course.switch_flag_1 = mNybbleBank.isValid() ? nybbleBank->getSwitchFlag1() : 0;
+        child.param_ex_0.course.layer = mNybbleBank.isValid() ? nybbleBank->getLayer() : getLayer();
+        child.param_ex_1.course.movement_id = mNybbleBank.isValid() ? nybbleBank->getParamEx().course.movement_id : 0;
+        child.param_ex_1.course.link_id = mNybbleBank.isValid() ? nybbleBank->getParamEx().course.link_id : 0;
         child.param_ex_1.course.init_state_flag = mParamEx.course.init_state_flag; // Nybble bank uses the initial state as a bank ID, use the spawner initial state
 
         const ActorCreateInfo& info = child.profile->getActorCreateInfo();
@@ -187,8 +184,8 @@ bool zap::ActorSpawnerEx::scanNybble() {
 
     mNybbleScanAttempt++;
     if (mNybbleScanAttempt > 5) {
-        tk::fatal("ActorSpawnerEx: Failed to find Nybble Bank with ID %i after 5 attempts...", nybbleBankID);
-        return false;
+        tk::println("ActorSpawnerEx: Failed to find Nybble Bank with ID %i after 5 attempts, falling back to all zero values...", nybbleBankID);
+        return true;
     }
 
     ActorMgr* actorMgr = ActorMgr::instance();

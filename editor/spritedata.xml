@@ -662,7 +662,7 @@
             <entry value="2">Despawn When Event is Deactivated</entry>
         </list>
 
-		<value nybble="10-11" title="Nybble Bank ID" comment="ID to link with a Nybble Bank containing the parameters of the actor to spawn." id_type="nybble_bank" category="behavior"/>
+		<value nybble="10-11" title="Nybble Bank ID" comment="ID to link with a Nybble Bank containing the parameters of the actor to spawn. If the Nybble bank does not exist, fallback values of 0 will be used instead." id_type="nybble_bank" category="behavior"/>
 
 		<initialstate title="Child Actor Initial State" comment="The initial state value to get passed to the spawned actor." type="value" category="behavior"/>
 	</sprite>
