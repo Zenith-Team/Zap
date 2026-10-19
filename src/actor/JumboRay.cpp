@@ -117,8 +117,7 @@ bool zap::JumboRay::execute() {
     // it's someone new
     if (rideFlags > mPlayerRideFlags) {
         // whistle and dance
-        GameAudio::getAudioObjEmy()->startSound("SE_EMY_MANTA_SING", mPos); //! <-- doesn't work
-        GameAudio::getAudioObjEmy()->startSound("SE_SYS_CONTINUE_DONE", mPos); //! <-- works
+        GameAudio::getAudioObjEmy()->startSound("SE_EMY_MANTA_SING", mPos);
         
         // play anim
         mModel->playSklAnim("ridden", 1);
